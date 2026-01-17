@@ -1,0 +1,39 @@
+name: GitHub pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  # Taken from the docs at
+  # https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages#linking-separate-build-and-deploy-jobs
+  #
+  # For convenience, we do *not* render the static site as part of the workflow,
+  # which is why there is no need for a separate build job.
+  #
+  # In a proper project however, you will likely want to render the static site
+  # as part of the workflow. See GitHub's docs on how to set that up, e.g. see
+  # https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
+  deploy:
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: 'public'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
